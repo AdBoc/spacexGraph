@@ -1,0 +1,14 @@
+.chartWrapper {
+    max-width: 1000px;
+    max-height: 1000px;
+    margin: auto;
+    text-align: center;
+}
+
+.svgContentResponsive {
+    background: antiquewhite;
+}
+
+.circle:hover {
+    fill: red;
+}
