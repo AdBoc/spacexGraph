@@ -19,39 +19,79 @@ const BarChart = ({launchesData}: { launchesData: LaunchesData }) => {
     const width = chartWidth - margin.top - margin.bottom;
 
     const xScale = d3.scaleTime()
-      .domain([launchesData[launchesData.length - 1].date, new Date()])
+      .domain([launchesData[launchesData.length - 1].date.getTime() - (31*24*60*60*1000), new Date()])
       .range([margin.left, width - margin.right]);
     const yScale = d3.scaleLinear()
       .domain([0, Math.max(...launchesData.map((data) => data.mass)) + 1000])
       .range([height - margin.top, margin.bottom]);
 
     const xAxis = d3.axisBottom(xScale)
-      .tickFormat(d3.timeFormat("%Y"))
-      .ticks(10);
+      .ticks(8);
     const yAxis = d3.axisLeft(yScale)
-      .ticks(10);
+      .ticks(8);
 
-    svg.selectAll("circle")
+    // svg.select("clipPath")
+    //   .attr("x", margin.left)
+    //   .attr("y", margin.top)
+    //   .attr("width", width - margin.left - margin.right)
+    //   .attr("height", height - margin.top - margin.bottom);
+
+    var clip = svg.append("svg:clipPath")
+      .attr("id", "clip")
+      .append("svg:rect")
+      .attr("x", margin.left)
+      .attr("y", margin.top)
+      .attr("width", width - margin.left - margin.right)
+      .attr("height", height - margin.top - margin.bottom);
+
+    const points = svg.selectAll("circle")
+      .attr("clip-path", "url(#clip)")
       .data(launchesData)
       .attr("cx", (data) => xScale(data.date))
       .attr("cy", (data) => yScale(data.mass))
       .attr("fill", "navy")
-      .attr("r", 1);
+      .attr("r", 1)
 
-    svg.select(".x-axis")
+    const xAxisGroup = svg.select(".x-axis")
       .style("transform", `translateY(${height}px)`)
       .call(xAxis);
 
-    svg.select(".y-axis")
+    const yAxisGroup = svg.select(".y-axis")
       .style("transform", `translateX(${margin.left}px)`)
       .call(yAxis);
+
+    // let zoom = d3.zoom().on("zoom", ({transform}) => {
+    //   let newXXScale = transform.rescaleX(xScale);
+    //   let newYScale = transform.rescaleY(yScale);
+    //   xAxis.scale(newXXScale);
+    //   yAxis.scale(newYScale);
+    //   xAxisGroup.call(newXXScale);
+    //   yAxisGroup.call(newYScale);
+    //   points.attr("cx", (d) => newXXScale(d.date))
+    //     .attr("cy", (d) => newYScale(d.mass));
+    //   console.log("zoom");
+    // });
+    // svg.call(zoom);
+
+    let zoom = d3.zoom()
+      .on("zoom", ({transform}) => {
+        let newXXScale = transform.rescaleX(xScale);
+        // let newYScale = transform.rescaleY(yScale);
+        xAxisGroup.call(xAxis.scale(newXXScale));
+        // yAxisGroup.call(yAxis.scale(newYScale));
+        points.attr("cx", (d) => newXXScale(d.date))
+        // .attr("cy", (d) => newYScale(d.mass));
+      }).scaleExtent([1, 32])
+      .extent([[margin.left, 0], [width - margin.right, height]])
+      .translateExtent([[margin.left, -Infinity], [width - margin.right, Infinity]]);
+
+    svg.call(zoom);
   };
 
-  const getPointData = ({target}) => {
-    setPointData(launchesData[parseInt(target.id)]);
-  };
+  const getPointData = ({target}) => setPointData(launchesData[parseInt(target.id)]);
 
-  const bars = launchesData.map((data, i) => <circle key={data.date.toString()} className={styles.circle} id={i.toString()} onMouseEnter={getPointData}/>); ///rect
+  const bars = launchesData.map((data, i) => <circle key={data.date.toString()} className={styles.circle} id={i.toString()}
+                                                     onMouseEnter={getPointData}/>); ///rect
 
   return (
     <div className={styles.chartWrapper}>
@@ -60,13 +100,12 @@ const BarChart = ({launchesData}: { launchesData: LaunchesData }) => {
         viewBox={`0 0 ${chartWidth} ${chartHeight}`}
         ref={svgRef}
       >
-        {bars}
+        <g>{bars}</g>
         <g className={"x-axis"}/>
         <g className={"y-axis"}/>
       </svg>
-      <p>Date {pointData.date.toISOString().substring(0, 10)}</p>
-      {/*<p>Date {pointData.date.toString()}</p>*/}
-      <p>Mass {pointData.mass}</p>
+      <p>Date: {pointData.date.toISOString().substring(0, 10)}</p>
+      <p>Mass: {pointData.mass}</p>
     </div>
   );
 };
