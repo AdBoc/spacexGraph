@@ -12,3 +12,7 @@
 .circle:hover {
     fill: red;
 }
+
+.tick {
+    opacity: 0.1;
+}
