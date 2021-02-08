@@ -1,18 +1,14 @@
 .chartWrapper {
     max-width: 1000px;
-    max-height: 1000px;
+    /*max-height: 800px;*/
     margin: auto;
     text-align: center;
 }
 
 .svgContentResponsive {
-    background: antiquewhite;
+    /*background: #fffefa;*/
 }
 
 .circle:hover {
     fill: red;
-}
-
-.tick {
-    opacity: 0.1;
 }

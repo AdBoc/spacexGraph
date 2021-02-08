@@ -1,0 +1,12 @@
+.details_component {
+    position: absolute;
+    top: 5em;
+    left: 50%;
+    transform: translate(-50%, 0);
+    background: white;
+    width: 80%;
+}
+
+.section_title {
+    text-align: center;
+}

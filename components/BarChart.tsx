@@ -32,13 +32,18 @@ const BarChart = ({launchesData}: { launchesData: LaunchesData }) => {
 
     let zoom = d3.zoom()
       .on("zoom", ({transform}) => {
-        let newXXScale = transform.rescaleX(xScale);
-        xAxisGroup.call(xAxis.scale(newXXScale));
-        points.attr("cx", (d) => newXXScale(d.date))
+        let newXScale = transform.rescaleX(xScale);
+        // let newYScale = transform.rescaleY(yScale);
+
+        xAxisGroup.call(xAxis.scale(newXScale));
+        // yAxisGroup.call(yAxis.scale(newYScale));
+
+        points.attr("cx", d => newXScale(d.date));
+        // points.attr("cy", d => newYScale(d.date));
       })
       .scaleExtent([1, 32])
-      .extent([[margin.left, 0], [width - margin.right, height]])
-      .translateExtent([[margin.left, -Infinity], [width - margin.right, Infinity]]);
+      .extent([[margin.left, 0], [width - margin.right, 0]])
+      .translateExtent([[margin.left, 0], [width - margin.right, 0]]);
 
     const svg = d3.select(svgRef.current).call(zoom);
 
@@ -62,16 +67,18 @@ const BarChart = ({launchesData}: { launchesData: LaunchesData }) => {
       .style("transform", `translateY(${height}px)`)
       .call(xAxis);
 
-    svg.select(".y-axis")
+    const yAxisGroup = svg.select(".y-axis")
       .style("transform", `translateX(${margin.left}px)`)
       .call(yAxis);
   };
 
-  const getPointData = ({target}) => setPointData(launchesData[parseInt(target.id)]);
-
-  const bars = launchesData.map((data, i) => <circle key={data.date.toString()} className={styles.circle} id={i.toString()}
-                                                     onMouseEnter={getPointData}/>);
-  // const gridTicks = Array.from({length: 8}, (x, i) => <g className={"tick"}/>)
+  const points = launchesData.map((data, i) => <circle
+    key={data.id}
+    className={styles.circle}
+    id={i.toString()}
+    onMouseEnter={(e: any) => setPointData(launchesData[parseInt(e.target.id)])}
+    onMouseLeave={() => setPointData(null)}
+  />);
 
   return (
     <div className={styles.chartWrapper}>
@@ -80,7 +87,7 @@ const BarChart = ({launchesData}: { launchesData: LaunchesData }) => {
         viewBox={`0 0 ${totalWidth} ${totalHeight}`}
         ref={svgRef}
       >
-        <g>{bars}</g>
+        <g>{points}</g>
         <g className={"x-axis"}/>
         <g className={"y-axis"}/>
         <clipPath>
@@ -88,9 +95,11 @@ const BarChart = ({launchesData}: { launchesData: LaunchesData }) => {
         </clipPath>
       </svg>
       <div>
-        <p>Payload details from previous launches</p>
-        {pointData && <p>Date: {pointData.date.toISOString().substring(0, 10)}</p>}
-        {pointData && <p>Mass: {pointData.mass}</p>}
+        {pointData && <div>
+            <p>Payload details from previous launches</p>
+            <p>Date: {pointData.date.toISOString().substring(0, 10)}</p>
+            <p>Mass: {pointData.mass}</p>
+        </div>}
       </div>
     </div>
   );
