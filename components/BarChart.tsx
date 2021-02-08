@@ -70,8 +70,7 @@ const BarChart = ({launchesData}: { launchesData: LaunchesData }) => {
   const getPointData = ({target}) => setPointData(launchesData[parseInt(target.id)]);
 
   const bars = launchesData.map((data, i) => <circle key={data.date.toString()} className={styles.circle} id={i.toString()}
-                                                     onMouseEnter={getPointData}/>);
-  // const gridTicks = Array.from({length: 8}, (x, i) => <g className={"tick"}/>)
+                                                     onMouseEnter={getPointData} onMouseLeave={() => setPointData(null)}/>);
 
   return (
     <div className={styles.chartWrapper}>
@@ -88,7 +87,7 @@ const BarChart = ({launchesData}: { launchesData: LaunchesData }) => {
         </clipPath>
       </svg>
       <div>
-        <p>Payload details from previous launches</p>
+        {pointData && <p>Payload details from previous launches</p>}
         {pointData && <p>Date: {pointData.date.toISOString().substring(0, 10)}</p>}
         {pointData && <p>Mass: {pointData.mass}</p>}
       </div>
