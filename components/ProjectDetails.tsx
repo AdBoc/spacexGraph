@@ -3,23 +3,18 @@ import styles from "../styles/ProjectDetails.module.css"
 const ProjectDetails = () => {
   return (
     <div className={styles.details_component}>
-      <h2 className={styles.section_title}>Opis</h2>
-      <p>Projekt zostal stworzony przy uzyciu create-next-app</p>
-      <p>Na stronie znajduje się responsywny(dostosowujący się do wielkości ekranu) wykres, przedstawiający masy payloadów wysyłanych na przestrzeni
-        czasu. Punkty potrafią być upakowane w jednym miejscu, więc za pomocą scrolla można przybliżać</p>
-      <h2 className={styles.section_title}>Założenia</h2>
-      <p>Dane powinny byc zawsze aktualne. Niestety nie mozna w pelni skorzystac z zalet static generation (getStaticProps) poniewaz dane pochadzace z
-        api spacex powinny byc zawsze aktualne. Zgodnie z dokumentacją:
-        On the other hand, Static Generation is not a good idea if you cannot pre-render a page ahead of a user's request. Maybe your page shows
-        frequently updated data, and the page content changes on every request.
-        Zamiast tego używam Server-side Rendering</p>
-      <p>Jeśli payload posiada wartość null jest ignorowany</p>
-      <p>Jeśli istnieje wiele wag payload pobierana jest tylko pierwsza</p>
-      <p>Przedzial na grafie generowany jest w calości według danych</p>
-      <h2 className={styles.section_title}>Problemy oraz własne zastrzeżenia do projektu</h2>
-      <p>api.spacex zwraca uporządkowane dane od najstarszego launcha z wyjątykiem najnowszej, która jest powtórzona</p>
-      <p>Do graphql uzywam apollo, ale importowanie calej biblioteki (i tylu dependencji) tylko dla jednego requesta nie ma wiekszego sensu, wiec
-        mozna uzyc po prostu fetch {"{launchesPast(limit: 100){launch_date_local, rocket{second_stage{payloads{payload_mass_kg}}}}}"}</p>
+      <h2 className={styles.section_title}>Description</h2>
+      <p>Language: Typescript(React)</p>
+      <p>Setup: create-next-app</p>
+      <p>Chart library: D3</p>
+      <p>Website shows chart with payload masses. Some places on chart are more dense, so zoom functionality with scroll exists</p>
+      <p>Website uses Static Generation (getStaticProps) so chart might not be up-to-date and site is static.</p>
+      <h2 className={styles.section_title}>My own remarks</h2>
+      <p>If payload mass is null then it gets ignored</p>
+      <p>Domain and Range are automatically calculated for my chart (Chart is so flexible it will automatically adjust to any data values and
+        dates)</p>
+      <p>I have created separate Id's for data returned from api, so react keys can be truly and always unique</p>
+      <p>There is no need to import library for just one fetch, so instead graphql-request I could have used just fetch</p>
     </div>
   );
 };

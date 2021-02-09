@@ -5,6 +5,6 @@ Setup: Create-next-app
 
 Language: Typescript(React)
 
-Libraries: Apollo, D3
+Chart library: D3
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) to see the result.

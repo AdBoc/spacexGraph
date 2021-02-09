@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint --fix . && echo 'Lint complete.'"
+    "lint": "eslint --fix . && echo 'Lint complete.'",
+    "export": "npm run build && next export -o _static"
   },
   "dependencies": {
     "@types/d3": "^6.3.0",

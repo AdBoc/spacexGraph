@@ -1,9 +1,9 @@
 import {useState} from "react";
-import ProjectDetails from "../components/ProjectDetails";
 import {request} from "graphql-request";
-import {LaunchesData, LaunchesDataRequest} from "../types";
-import BarChart from "../components/BarChart";
 import {launchesDataQuery} from "../queries/queries";
+import ProjectDetails from "../components/ProjectDetails";
+import BarChart from "../components/BarChart";
+import {LaunchesData, LaunchesDataRequest} from "../types";
 import styles from "../styles/Home.module.css";
 
 type IProps = {
