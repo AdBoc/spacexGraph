@@ -1,20 +1,16 @@
 import * as d3 from "d3";
 import {GetElementType, LaunchesData} from "../types";
 
-type Props = {
-  data: LaunchesData;
-}
-
-class MassChart {
+class MassScatterChart {
   private readonly totalWidth = 560;
   private readonly totalHeight = 500;
   private readonly margin = {top: 10, right: 30, bottom: 30, left: 60};
   private readonly svgRef: SVGSVGElement;
   private readonly data: LaunchesData;
 
-  constructor(svgRef: SVGSVGElement, props: Props) {
+  constructor(svgRef: SVGSVGElement, data: LaunchesData) {
     this.svgRef = svgRef;
-    this.data = props.data;
+    this.data = data;
   }
 
   public drawChart() {
@@ -86,4 +82,4 @@ class MassChart {
   }
 }
 
-export default MassChart;
+export default MassScatterChart;

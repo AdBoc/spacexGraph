@@ -1,13 +1,14 @@
 import {useEffect, useRef, useState} from "react";
-import MassChart from "../d3charts/MassChart";
+import MassScatterChart from "../d3charts/massScatterChart";
 import {GetElementType, LaunchesData} from "../types";
 import styles from "../styles/BarChart.module.css";
 
 const BarChart = ({launchesData}: { launchesData: LaunchesData }) => {
+
   const [pointData, setPointData] = useState<GetElementType<LaunchesData> | null>(null);
   const svgRef = useRef<SVGSVGElement>(null);
 
-  useEffect(() => new MassChart(svgRef.current, {data: launchesData}).drawChart(), []);
+  useEffect(() => new MassScatterChart(svgRef.current, launchesData).drawChart(), []);
 
   const points = launchesData.map((data, i) => <circle
     key={data.id}
