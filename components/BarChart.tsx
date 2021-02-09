@@ -3,8 +3,8 @@ import {useEffect, useRef, useState} from "react";
 import {GetElementType, LaunchesData} from "../types";
 import styles from "../styles/BarChart.module.css";
 
-const totalHeight = 400;
-const totalWidth = 600;
+const totalHeight = 500;
+const totalWidth = 560;
 
 const BarChart = ({launchesData}: { launchesData: LaunchesData }) => {
   const [pointData, setPointData] = useState<GetElementType<LaunchesData> | null>(null);
@@ -12,65 +12,73 @@ const BarChart = ({launchesData}: { launchesData: LaunchesData }) => {
   useEffect(() => drawGraph(), []);
 
   const drawGraph = () => {
-    const margin = {top: 0, bottom: 20, left: 50, right: 20};
-    const height = totalHeight - margin.left - margin.right;
-    const width = totalWidth - margin.top - margin.bottom;
+    let margin = {top: 10, right: 30, bottom: 30, left: 60},
+      width = totalWidth - margin.left - margin.right,
+      height = totalHeight - margin.top - margin.bottom;
 
-    const xScale = d3.scaleTime()
+    let svg = d3.select(svgRef.current)
+      .attr("width", width + margin.left + margin.right)
+      .attr("height", height + margin.top + margin.bottom)
+      .select("g")
+      .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+    let xScale = d3.scaleTime()
       .domain([launchesData[launchesData.length - 1].date.getTime() - 2678400000, new Date()])
-      .range([margin.left, width - margin.right]);
-    const yScale = d3.scaleLinear()
+      .range([0, width]);
+    let yScale = d3.scaleLinear()
       .domain([0, Math.max(...launchesData.map((data) => data.mass)) + 1000])
-      .range([height - margin.top, margin.bottom]);
+      .range([height, 0]);
 
-    const xAxis = d3.axisBottom(xScale)
-      .ticks(8)
-      .tickSize(-height + margin.bottom);
-    const yAxis = d3.axisLeft(yScale)
-      .ticks(8)
-      .tickSize(-width + margin.right + margin.left);
+    let xAxis = d3.axisBottom(xScale);
+    let yAxis = d3.axisLeft(yScale);
 
-    let zoom = d3.zoom()
-      .on("zoom", ({transform}) => {
-        let newXScale = transform.rescaleX(xScale);
-        // let newYScale = transform.rescaleY(yScale);
+    let xAxisGroup = svg.select("#x-axis")
+      .attr("transform", "translate(0," + height + ")")
+      .call(xAxis);
+    let yAxisGroup = svg.select("#y-axis")
+      .call(yAxis);
 
-        xAxisGroup.call(xAxis.scale(newXScale));
-        // yAxisGroup.call(yAxis.scale(newYScale));
+    d3.select("#clip-rect")
+      .attr("width", width)
+      .attr("height", height)
+      .attr("x", 0)
+      .attr("y", 0);
 
-        points.attr("cx", d => newXScale(d.date));
-        // points.attr("cy", d => newYScale(d.date));
-      })
-      .scaleExtent([1, 32])
-      .extent([[margin.left, 0], [width - margin.right, 0]])
-      .translateExtent([[margin.left, 0], [width - margin.right, 0]]);
+    let scatter = svg.select("#scatter")
+      .attr("clip-path", "url(#clip)");
 
-    const svg = d3.select(svgRef.current).call(zoom);
-
-    svg.select("clipPath")
-      .attr("id", "clip")
-      .select("rect")
-      .attr("x", margin.left)
-      .attr("y", margin.bottom)
-      .attr("width", width - margin.left - margin.right)
-      .attr("height", height - margin.top - margin.bottom);
-
-    const points = svg.selectAll("circle")
-      .attr("clip-path", "url(#clip)")
+    scatter.selectAll("circle")
       .data(launchesData)
-      .attr("cx", (data) => xScale(data.date))
-      .attr("cy", (data) => yScale(data.mass))
+      .attr("cx", (d) => xScale(d.date))
+      .attr("cy", (d) => yScale(d.mass))
       .attr("fill", "navy")
       .attr("r", 2);
 
-    const xAxisGroup = svg.select(".x-axis")
-      .style("transform", `translateY(${height}px)`)
-      .call(xAxis);
+    let zoom = d3.zoom()
+      .scaleExtent([1, 100])
+      .extent([[0, 0], [width, height]])
+      .translateExtent([[0, 0], [width + margin.left - margin.right, totalHeight - margin.top - margin.bottom]])
+      .on("zoom", updateChart);
 
-    const yAxisGroup = svg.select(".y-axis")
-      .style("transform", `translateX(${margin.left}px)`)
-      .call(yAxis);
-  };
+    svg.select("#zoom-event")
+      .attr("width", width)
+      .attr("height", height)
+      .style("fill", "none")
+      .style("pointer-events", "all")
+      .call(zoom);
+
+    function updateChart({transform}) {
+      let newX = transform.rescaleX(xScale);
+      let newY = transform.rescaleY(yScale);
+
+      xAxisGroup.call(d3.axisBottom(newX));
+      yAxisGroup.call(d3.axisLeft(newY));
+
+      scatter.selectAll("circle")
+        .attr("cx", (d: GetElementType<LaunchesData>) => newX(d.date))
+        .attr("cy", (d: GetElementType<LaunchesData>) => newY(d.mass));
+    }
+  }
 
   const points = launchesData.map((data, i) => <circle
     key={data.id}
@@ -82,27 +90,31 @@ const BarChart = ({launchesData}: { launchesData: LaunchesData }) => {
 
   return (
     <div className={styles.chartWrapper}>
-      <svg
-        className={styles.svgContentResponsive}
-        viewBox={`0 0 ${totalWidth} ${totalHeight}`}
-        ref={svgRef}
-      >
-        <g>{points}</g>
-        <g className={"x-axis"}/>
-        <g className={"y-axis"}/>
-        <clipPath>
-          <rect/>
-        </clipPath>
+      <svg ref={svgRef}>
+        <g>
+          <rect id="zoom-event"/>
+          <g id="scatter">
+            {points}
+          </g>
+          <g id="x-axis"/>
+          <g id="y-axis"/>
+          <defs>
+            <clipPath id="clip">
+              <rect id="clip-rect"/>
+            </clipPath>
+          </defs>
+        </g>
       </svg>
       <div>
+        <p>Hover-over/tap point to see details</p>
         {pointData && <div>
-            <p>Payload details from previous launches</p>
+            <p>Payload details:</p>
             <p>Date: {pointData.date.toISOString().substring(0, 10)}</p>
             <p>Mass: {pointData.mass}</p>
         </div>}
       </div>
     </div>
-  );
-};
+  )
+}
 
 export default BarChart;
