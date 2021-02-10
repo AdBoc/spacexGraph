@@ -13,3 +13,10 @@
 .section_title {
     text-align: center;
 }
+
+.github_repo {
+    display: block;
+    color: #2a2aff;
+    text-decoration: underline;
+    text-align: center;
+}

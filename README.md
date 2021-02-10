@@ -7,4 +7,4 @@ Language: Typescript(React)
 
 Chart library: D3
 
-Open [http://localhost:3000](http://localhost:3000) to see the result.
+Open [link](https://spacex-graph-4gd2d.ondigitalocean.app/) to see project.

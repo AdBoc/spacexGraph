@@ -3,7 +3,7 @@ import MassScatterChart from "../d3charts/massScatterChart";
 import {GetElementType, LaunchesData} from "../types";
 import styles from "../styles/BarChart.module.css";
 
-const BarChart = ({launchesData}: { launchesData: LaunchesData }) => {
+const ScatterChart = ({launchesData}: { launchesData: LaunchesData }) => {
 
   const [pointData, setPointData] = useState<GetElementType<LaunchesData> | null>(null);
   const svgRef = useRef<SVGSVGElement>(null);
@@ -36,7 +36,7 @@ const BarChart = ({launchesData}: { launchesData: LaunchesData }) => {
         </g>
       </svg>
       <div>
-        <p>Hover-over or tap point to see details</p>
+        <p>Hover over or tap point to see details</p>
         {pointData && <div className={styles.payload_details}>
             <p>Payload details:</p>
             <p>Date: {pointData.date.toISOString().substring(0, 10)}</p>
@@ -47,4 +47,4 @@ const BarChart = ({launchesData}: { launchesData: LaunchesData }) => {
   )
 }
 
-export default BarChart;
+export default ScatterChart;

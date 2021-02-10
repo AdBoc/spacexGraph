@@ -2,7 +2,7 @@ import Head from "next/head";
 
 const Layout = ({children}) => {
   return (
-    <div>
+    <>
       <Head>
         <title>SpaceX Graph</title>
         <link rel="icon" href="/favicon.ico"/>
@@ -11,7 +11,7 @@ const Layout = ({children}) => {
       <main>
         {children}
       </main>
-    </div>
+    </>
   );
 };
 

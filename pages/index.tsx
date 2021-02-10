@@ -2,7 +2,7 @@ import {useState} from "react";
 import {request} from "graphql-request";
 import {launchesDataQuery} from "../queries/queries";
 import ProjectDetails from "../components/ProjectDetails";
-import BarChart from "../components/BarChart";
+import ScatterChart from "../components/ScatterChart";
 import {LaunchesData, LaunchesDataRequest} from "../types";
 import styles from "../styles/Home.module.css";
 
@@ -30,7 +30,7 @@ export default function Home({launchesData}: IProps) {
     <div>
       <button className={styles.project_details_btn} onClick={() => setProjectDetails(prev => !prev)}>About Project</button>
       {projectDetails && <ProjectDetails/>}
-      <BarChart launchesData={launchesTransformedData}/>
+      <ScatterChart launchesData={launchesTransformedData}/>
     </div>
   );
 };

@@ -53,10 +53,11 @@ class MassScatterChart {
       .attr("cx", (d) => xScale(d.date))
       .attr("cy", (d) => yScale(d.mass))
       .attr("fill", "navy")
-      .attr("r", 2);
+      .attr("opacity", "0.7")
+      .attr("r", 3);
 
     let zoom = d3.zoom()
-      .scaleExtent([1, 100])
+      .scaleExtent([1, 500])
       .extent([[0, 0], [width, height]])
       .translateExtent([[0, 0], [width, height]])
       .on("zoom", updateChart);
