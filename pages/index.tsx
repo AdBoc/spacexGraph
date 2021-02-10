@@ -1,39 +1,41 @@
 import {useState} from "react";
-import Error from "next/error";
-import BarChart from "../components/BarChart";
+import {request} from "graphql-request";
+import {launchesDataQuery} from "../queries/queries";
 import ProjectDetails from "../components/ProjectDetails";
+import ScatterChart from "../components/ScatterChart";
+import {LaunchesData, LaunchesDataRequest} from "../types";
+import styles from "../styles/Home.module.css";
 
-export default function Home({errorCode, launchesData}) {
+type IProps = {
+  launchesData: LaunchesDataRequest;
+};
+
+export default function Home({launchesData}: IProps) {
   const [projectDetails, setProjectDetails] = useState(false);
 
-  const launchesTransformedData = launchesData.data.launchesPast
-    .map((data) => ({
-      date: new Date(data.launch_date_local),
-      mass: data.rocket.second_stage.payloads[0].payload_mass_kg
+  const launchesTransformedData = launchesData.launchesPast.reduce((accumulatedLaunches, launch) => {
+    launch.rocket.second_stage.payloads.forEach(((payload, index) => {
+      if (payload.payload_mass_kg) {
+        accumulatedLaunches.push({
+          id: launch.launch_date_local + launch.id + index,
+          date: new Date(launch.launch_date_local),
+          mass: payload.payload_mass_kg
+        })
+      }
     }))
-    .filter((data) => data.mass)
-    .splice(1);
-
-  if (errorCode) {
-    return <Error statusCode={errorCode.status} title={"error while fetching"}/>;
-  }
+    return accumulatedLaunches;
+  }, []) as LaunchesData;
 
   return (
     <div>
-      <button onClick={() => setProjectDetails(prev => !prev)}>About Project</button>
+      <button className={styles.project_details_btn} onClick={() => setProjectDetails(prev => !prev)}>About Project</button>
       {projectDetails && <ProjectDetails/>}
-      <BarChart launchesData={launchesTransformedData}/>
+      <ScatterChart launchesData={launchesTransformedData}/>
     </div>
   );
 };
 
-export async function getServerSideProps() {
-  const launchesResponse = await fetch("https://api.spacex.land/graphql/", {
-    method: 'POST',
-    headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify({query: '{launchesPast(limit:100){launch_date_local,rocket{second_stage{payloads{payload_mass_kg}}}}}'}),
-  });
-  const errorCode = launchesResponse.ok ? false : launchesResponse.status;
-  const launchesData = await launchesResponse.json();
-  return {props: {errorCode, launchesData}};
+export async function getStaticProps() {
+  const response = await request<LaunchesDataRequest>("https://api.spacex.land/graphql/", launchesDataQuery);
+  return {props: {launchesData: response}}
 }

@@ -5,6 +5,6 @@ Setup: Create-next-app
 
 Language: Typescript(React)
 
-Libraries: Apollo, D3
+Chart library: D3
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [link](https://spacex-graph-4gd2d.ondigitalocean.app/) to see project.

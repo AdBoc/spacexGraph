@@ -1,18 +1,17 @@
-.chartWrapper {
-    max-width: 1000px;
-    max-height: 1000px;
+.chart_wrapper {
     margin: auto;
     text-align: center;
-}
-
-.svgContentResponsive {
-    background: antiquewhite;
 }
 
 .circle:hover {
     fill: red;
 }
 
-.tick {
-    opacity: 0.1;
+.payload_details {
+    background: #e9e9e9;
+    border: 1px solid black;
+    border-radius: 5px;
+    padding: 0.5em;
+    margin: 0.5em auto;
+    width: 10em;
 }

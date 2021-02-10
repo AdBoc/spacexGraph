@@ -1,0 +1,22 @@
+.details_component {
+    position: absolute;
+    top: 5em;
+    left: 50%;
+    transform: translate(-50%, 0);
+    background: white;
+    width: 80%;
+    border: 2px solid black;
+    border-radius: 5px;
+    padding: 1em;
+}
+
+.section_title {
+    text-align: center;
+}
+
+.github_repo {
+    display: block;
+    color: #2a2aff;
+    text-decoration: underline;
+    text-align: center;
+}
